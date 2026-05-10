@@ -1,4 +1,4 @@
-// static/js/chatbot.j
+// static/js/chatbot.js
 
 async function sendMessage(userMessage) {
 
