@@ -5,10 +5,11 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
 <style>
-    /* basic safety fallback styling for scroll + chat */
     body {
         margin: 0;
         font-family: Arial, sans-serif;
+        background: #0f0f0f;
+        color: #fff;
     }
 
     .app-container {
@@ -27,32 +28,58 @@
     .chat-box {
         flex: 1;
         overflow-y: auto;
-        padding: 10px;
+        padding: 12px;
     }
 
     .input-area {
         display: flex;
         padding: 10px;
+        border-top: 1px solid #222;
     }
 
     #user-input {
         flex: 1;
-        padding: 10px;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        outline: none;
     }
 
     button {
-        padding: 10px;
+        margin-left: 10px;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #1f1f1f;
+        color: white;
+        cursor: pointer;
+    }
+
+    .message {
+        margin: 8px 0;
+        padding: 8px;
+        border-radius: 8px;
+        background: #1a1a1a;
+    }
+
+    .you {
+        background: #2a2a2a;
+    }
+
+    .vin {
+        background: #1c1c1c;
+    }
+
+    .system {
+        font-size: 12px;
+        opacity: 0.7;
+        text-align: center;
     }
 
     .message img {
         max-width: 100%;
         border-radius: 10px;
-        margin-top: 5px;
-    }
-
-    .system {
-        opacity: 0.7;
-        font-size: 12px;
+        margin-top: 8px;
     }
 </style>
 
@@ -70,6 +97,7 @@
 </div><script src="https://js.puter.com/v2/"></script><!-- MODULES --><script src="{{ url_for('static', filename='modules/chatbot.js') }}"></script><script src="{{ url_for('static', filename='modules/image_gen.js') }}"></script><script src="{{ url_for('static', filename='modules/image_analysis.js') }}"></script><script src="{{ url_for('static', filename='modules/stream.js') }}"></script><script src="{{ url_for('static', filename='modules/temp.js') }}"></script><script src="{{ url_for('static', filename='modules/web.js') }}"></script><script src="{{ url_for('static', filename='modules/voice.js') }}"></script><script src="{{ url_for('static', filename='modules/codex.js') }}"></script><script src="{{ url_for('static', filename='modules/translator.js') }}"></script><script src="{{ url_for('static', filename='modules/emo.js') }}"></script><script>
 
 let currentMode = "chat";
+let statusElement = null;
 
 function addMessage(sender, text) {
 
@@ -78,16 +106,41 @@ function addMessage(sender, text) {
     const div = document.createElement("div");
     div.className = "message " + sender;
 
-    div.innerHTML = `<strong>${sender === 'vin' ? 'Vin' : sender}:</strong> ${text}`;
+    const label = sender === "vin" ? "Vin" : sender;
+
+    div.innerHTML = `<strong>${label}:</strong> ${text}`;
 
     chatBox.appendChild(div);
-
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// =========================
+// STATUS SYSTEM
+// =========================
+
 function showStatus(text) {
-    addMessage("system", text);
+
+    const chatBox = document.getElementById("chat-box");
+
+    statusElement = document.createElement("div");
+    statusElement.className = "system";
+    statusElement.innerHTML = `<em>${text}</em>`;
+
+    chatBox.appendChild(statusElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+function clearStatus() {
+
+    if (statusElement) {
+        statusElement.remove();
+        statusElement = null;
+    }
+}
+
+// =========================
+// MAIN HANDLER
+// =========================
 
 async function handleMainAction() {
 
@@ -101,20 +154,22 @@ async function handleMainAction() {
 
     try {
 
-        // default status
         showStatus("Typing...");
 
         const intent = detectIntent(text);
         const emotion = await analyzeEmotion(text);
 
         // =====================
-        // IMAGE
+        // IMAGE MODE
         // =====================
+
         if (intent === "image") {
 
             showStatus("Generating image...");
 
             const img = await generateImage(text);
+
+            clearStatus();
 
             const chatBox = document.getElementById("chat-box");
             const div = document.createElement("div");
@@ -130,13 +185,16 @@ async function handleMainAction() {
         }
 
         // =====================
-        // TRANSLATE
+        // TRANSLATE MODE
         // =====================
+
         if (intent === "translate") {
 
             showStatus("Translating...");
 
             const translated = await translateText(text);
+
+            clearStatus();
 
             addMessage("vin", translated);
 
@@ -144,21 +202,28 @@ async function handleMainAction() {
         }
 
         // =====================
-        // CHAT (STREAM OR NORMAL)
+        // CHAT MODE
         // =====================
 
         const response = await puter.ai.chat(text, {
             model: "gpt-5.4-nano"
         });
 
+        clearStatus();
+
         addMessage("vin", response);
 
     } catch (err) {
+
         console.error(err);
+        clearStatus();
         addMessage("vin", "Error occurred.");
     }
 }
 
+// =========================
+// INTENT DETECTOR
+// =========================
 
 function detectIntent(text) {
 
@@ -175,12 +240,14 @@ function detectIntent(text) {
         t.includes("how do i say") ||
         t.includes("translate") ||
         t.includes("in german") ||
-        t.includes("in french")
+        t.includes("in french") ||
+        t.includes("in spanish")
     ) return "translate";
 
     return "chat";
 }
 
+// ENTER KEY SUPPORT
 
 document.getElementById("user-input")
 .addEventListener("keypress", function(e) {
