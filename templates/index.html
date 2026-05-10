@@ -57,7 +57,7 @@
 
     .message {
         margin: 8px 0;
-        padding: 8px;
+        padding: 10px;
         border-radius: 8px;
         background: #1a1a1a;
     }
@@ -96,7 +96,6 @@
 
 </div><script src="https://js.puter.com/v2/"></script><!-- MODULES --><script src="{{ url_for('static', filename='modules/chatbot.js') }}"></script><script src="{{ url_for('static', filename='modules/image_gen.js') }}"></script><script src="{{ url_for('static', filename='modules/image_analysis.js') }}"></script><script src="{{ url_for('static', filename='modules/stream.js') }}"></script><script src="{{ url_for('static', filename='modules/temp.js') }}"></script><script src="{{ url_for('static', filename='modules/web.js') }}"></script><script src="{{ url_for('static', filename='modules/voice.js') }}"></script><script src="{{ url_for('static', filename='modules/codex.js') }}"></script><script src="{{ url_for('static', filename='modules/translator.js') }}"></script><script src="{{ url_for('static', filename='modules/emo.js') }}"></script><script>
 
-let currentMode = "chat";
 let statusElement = null;
 
 function addMessage(sender, text) {
@@ -131,7 +130,6 @@ function showStatus(text) {
 }
 
 function clearStatus() {
-
     if (statusElement) {
         statusElement.remove();
         statusElement = null;
@@ -154,15 +152,12 @@ async function handleMainAction() {
 
     try {
 
-        showStatus("Typing...");
-
         const intent = detectIntent(text);
         const emotion = await analyzeEmotion(text);
 
         // =====================
         // IMAGE MODE
         // =====================
-
         if (intent === "image") {
 
             showStatus("Generating image...");
@@ -187,7 +182,6 @@ async function handleMainAction() {
         // =====================
         // TRANSLATE MODE
         // =====================
-
         if (intent === "translate") {
 
             showStatus("Translating...");
@@ -204,6 +198,8 @@ async function handleMainAction() {
         // =====================
         // CHAT MODE
         // =====================
+
+        showStatus("Typing...");
 
         const response = await puter.ai.chat(text, {
             model: "gpt-5.4-nano"
@@ -238,7 +234,6 @@ function detectIntent(text) {
 
     if (
         t.includes("how do i say") ||
-        t.includes("translate") ||
         t.includes("in german") ||
         t.includes("in french") ||
         t.includes("in spanish")
@@ -247,7 +242,7 @@ function detectIntent(text) {
     return "chat";
 }
 
-// ENTER KEY SUPPORT
+// ENTER SUPPORT
 
 document.getElementById("user-input")
 .addEventListener("keypress", function(e) {
