@@ -1,14 +1,45 @@
 // static/js/stream.js
 
 // =========================
-// PROJECT VIN - STREAMING SYSTEM
+// PROJECT VIN - STREAM ENGINE
+// =========================
+
+
+// =========================
+// CHECK IF STREAM SHOULD RUN
+// =========================
+
+function shouldStream(text, intent) {
+
+    if (!text) return false;
+
+    // Only stream for chat mode
+    if (intent && intent !== "chat") return false;
+
+    // Stream long responses only
+    if (text.length > 60) return true;
+
+    return false;
+}
+
+
+// =========================
+// STREAMING ENGINE
 // =========================
 
 async function streamResponse(userMessage) {
 
     try {
 
-        // Create streaming response
+        const outputElement =
+            document.getElementById("stream-output");
+
+        if (!outputElement) return "";
+
+        outputElement.innerHTML = "";
+
+        let fullResponse = "";
+
         const response = await puter.ai.chat(
             userMessage,
             {
@@ -17,32 +48,16 @@ async function streamResponse(userMessage) {
             }
         );
 
-        // Output container
-        const outputElement =
-            document.getElementById("stream-output");
-
-        // Clear previous response
-        outputElement.innerHTML = "";
-
-        // Store full response
-        let fullResponse = "";
-
-        // Stream chunks in real-time
         for await (const part of response) {
 
-            // Ignore empty chunks
-            if (!part?.text) {
-                continue;
-            }
+            if (!part?.text) continue;
 
-            // Add chunk
             fullResponse += part.text;
 
-            // Update UI live
+            // LIVE UPDATE
             outputElement.innerHTML = fullResponse;
         }
 
-        // Return completed response
         return fullResponse;
 
     } catch (error) {
@@ -55,9 +70,44 @@ async function streamResponse(userMessage) {
 
 
 // =========================
-// EXAMPLE USAGE
+// SMART STREAM WRAPPER (NEW CORE)
 // =========================
 
-// streamResponse(
-//     "Explain the theory of relativity in detail"
-// );
+async function smartStreamResponse(text, intent, emotion) {
+
+    // Decide if streaming should happen
+    const useStream = shouldStream(text, intent);
+
+    // Emotion-based speed feel (future upgrade hook)
+    const isExcited = emotion?.sentiment === "excited";
+
+    try {
+
+        if (useStream) {
+
+            return await streamResponse(text);
+
+        } else {
+
+            // fallback normal response
+            const response = await puter.ai.chat(text, {
+                model: "gpt-5.4-nano"
+            });
+
+            const outputElement =
+                document.getElementById("stream-output");
+
+            if (outputElement) {
+                outputElement.innerHTML = response;
+            }
+
+            return response;
+        }
+
+    } catch (error) {
+
+        console.error("Smart Stream Error:", error);
+
+        return "Response failed.";
+    }
+}
