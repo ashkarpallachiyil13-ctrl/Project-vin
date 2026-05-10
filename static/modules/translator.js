@@ -1,7 +1,7 @@
 // static/js/translator.js
 
 // =========================
-// PROJECT VIN - TRANSLATOR
+// PROJECT VIN - LANGUAGE INTELLIGENCE v3
 // =========================
 
 async function translateText(text, targetLanguage = null) {
@@ -13,84 +13,84 @@ async function translateText(text, targetLanguage = null) {
         }
 
         // =========================
-        // LANGUAGE MAP (SOURCE OF TRUTH)
+        // STEP 1: LANGUAGE EXTRACTION (SMART)
         // =========================
 
-        const languageMap = [
-            { key: "german", value: "German" },
-            { key: "spanish", value: "Spanish" },
-            { key: "french", value: "French" },
-            { key: "hindi", value: "Hindi" },
-            { key: "malayalam", value: "Malayalam" },
-            { key: "english", value: "English" }
-        ];
+        function extractTargetLanguage(input) {
 
-        let detectedLanguage = null;
+            const patterns = [
+                /in ([a-zA-Z\- ]+)$/i,
+                /in ([a-zA-Z\- ]+)\?/i,
+                /translate (?:to )?([a-zA-Z\- ]+)/i,
+                /how do (?:i|you) say .* in ([a-zA-Z\- ]+)/i
+            ];
 
-        const lowerText = text.toLowerCase();
-
-        // =========================
-        // STEP 1: DETECT LANGUAGE FROM TEXT
-        // =========================
-
-        for (let lang of languageMap) {
-            if (lowerText.includes(lang.key)) {
-                detectedLanguage = lang.value;
-                break;
+            for (let p of patterns) {
+                const match = input.match(p);
+                if (match && match[1]) {
+                    return match[1].trim().toLowerCase();
+                }
             }
+
+            return null;
         }
 
+        let detectedLanguage =
+            targetLanguage ||
+            extractTargetLanguage(text) ||
+            "english";
+
         // =========================
-        // STEP 2: PRIORITY RULE
-        // UI language > detected language > default
+        // STEP 2: CLEAN TEXT (SMART EXTRACTION)
         // =========================
 
-        if (targetLanguage) {
-            detectedLanguage = targetLanguage;
+        let cleanText = text
+            .replace(/how do i say/i, "")
+            .replace(/how do you say/i, "")
+            .replace(/translate (to)?/i, "")
+            .replace(/in [a-zA-Z\- ]+/i, "")
+            .replace(/\?/g, "")
+            .trim();
+
+        // =========================
+        // STEP 3: TONE DETECTION (CASUAL / FORMAL)
+        // =========================
+
+        function detectTone(input) {
+
+            const formalWords = ["sir", "madam", "please", "kindly"];
+            const casualWords = ["bro", "yo", "lol", "dude"];
+
+            let formal = formalWords.some(w => input.toLowerCase().includes(w));
+            let casual = casualWords.some(w => input.toLowerCase().includes(w));
+
+            if (formal) return "formal";
+            if (casual) return "casual";
+
+            return "neutral";
         }
 
-        if (!detectedLanguage) {
-            detectedLanguage = "English";
-        }
+        const tone = detectTone(text);
 
         // =========================
-        // STEP 3: CLEAN INPUT TEXT
-        // remove language trigger words
-        // =========================
-
-        let cleanText = text;
-
-        for (let lang of languageMap) {
-
-            const regex = new RegExp(`\\b${lang.key}\\b`, "gi");
-
-            cleanText = cleanText.replace(regex, "");
-        }
-
-        cleanText = cleanText.replace(/\s+/g, " ").trim();
-
-        // =========================
-        // DEBUG (KEEP FOR TESTING)
-        // =========================
-
-        console.log("Detected Language:", detectedLanguage);
-        console.log("Clean Text:", cleanText);
-
-        // =========================
-        // STEP 4: PROMPT ENGINEERING
+        // STEP 4: UNIVERSAL TRANSLATION PROMPT
         // =========================
 
         const prompt = `
-You are a professional translator.
+You are a world-class multilingual translation engine.
 
-Translate the text into: ${detectedLanguage}
+TASK:
+Translate ONLY the phrase into: ${detectedLanguage}
 
-Rules:
-- Output ONLY the translation
+RULES:
+- Preserve meaning exactly
+- Do NOT translate instructions or metadata
+- Keep tone: ${tone}
+- If sentence is natural conversation, keep it natural in target language
+- Output ONLY final translation
 - No explanations
-- No extra text
 
-Text:
+INPUT PHRASE:
 ${cleanText}
 `;
 
@@ -98,12 +98,9 @@ ${cleanText}
         // STEP 5: AI CALL
         // =========================
 
-        const translation = await puter.ai.chat(
-            prompt,
-            {
-                model: "gpt-5-nano"
-            }
-        );
+        const translation = await puter.ai.chat(prompt, {
+            model: "gpt-5-nano"
+        });
 
         return translation;
 
