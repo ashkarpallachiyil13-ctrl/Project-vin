@@ -1,15 +1,10 @@
 // static/js/temp.js
 
 // =========================
-// PROJECT VIN - TEMPERATURE CONTROL
+// PROJECT VIN - TEMPERATURE ENGINE
 // =========================
 
-// This module controls:
-// - Creativity
-// - Randomness
-// - Response length
-// - AI behavior tuning
-
+// CORE AI CALL WRAPPER
 async function generateTemperatureResponse(
     prompt,
     temperature = 0.7,
@@ -18,16 +13,11 @@ async function generateTemperatureResponse(
 
     try {
 
-        // Send request to AI
         const response = await puter.ai.chat(
             prompt,
             {
                 model: "gpt-5.4-nano",
-
-                // Creativity level
-                temperature: temperature,
-
-                // Maximum response length
+                temperature,
                 max_tokens: maxTokens
             }
         );
@@ -36,10 +26,7 @@ async function generateTemperatureResponse(
 
     } catch (error) {
 
-        console.error(
-            "Temperature System Error:",
-            error
-        );
+        console.error("Temperature System Error:", error);
 
         return "Temperature response failed.";
     }
@@ -47,39 +34,110 @@ async function generateTemperatureResponse(
 
 
 // =========================
-// FOCUSED RESPONSE MODE
+// EMOTION → TEMPERATURE MAPPING
 // =========================
 
+function getTemperatureFromEmotion(emotion) {
+
+    if (!emotion || !emotion.sentiment) return 0.7;
+
+    switch (emotion.sentiment) {
+
+        case "excited":
+            return 0.9;
+
+        case "angry":
+            return 0.4;
+
+        case "sad":
+            return 0.6;
+
+        case "positive":
+            return 0.8;
+
+        case "negative":
+            return 0.5;
+
+        default:
+            return 0.7;
+    }
+}
+
+
+// =========================
+// INTENT → RESPONSE BEHAVIOR
+// =========================
+
+function getIntentOverrides(intent) {
+
+    const config = {
+        temperature: 0.7,
+        maxTokens: 120
+    };
+
+    switch (intent) {
+
+        case "image":
+            config.temperature = 0.8;
+            config.maxTokens = 200;
+            break;
+
+        case "translate":
+            config.temperature = 0.2;
+            config.maxTokens = 80;
+            break;
+
+        case "code":
+            config.temperature = 0.3;
+            config.maxTokens = 300;
+            break;
+
+        case "chat":
+        default:
+            config.temperature = 0.7;
+            config.maxTokens = 150;
+            break;
+    }
+
+    return config;
+}
+
+
+// =========================
+// MAIN VIN SMART ENGINE
+// =========================
+
+async function smartTemperatureChat(prompt, emotion, intent) {
+
+    // 1. Base emotion control
+    let temperature = getTemperatureFromEmotion(emotion);
+
+    // 2. Intent override system
+    const overrides = getIntentOverrides(intent);
+
+    // 3. Merge logic (intent wins if specific)
+    temperature = overrides.temperature ?? temperature;
+    const maxTokens = overrides.maxTokens ?? 120;
+
+    // 4. Execute AI call
+    return await generateTemperatureResponse(
+        prompt,
+        temperature,
+        maxTokens
+    );
+}
+
+
+// =========================
+// OPTIONAL SIMPLE MODES
+// =========================
+
+// LOW CREATIVITY MODE
 async function focusedMode(prompt) {
-
-    return await generateTemperatureResponse(
-        prompt,
-        0.2,   // Low creativity
-        50
-    );
+    return await generateTemperatureResponse(prompt, 0.2, 50);
 }
 
-
-// =========================
-// CREATIVE RESPONSE MODE
-// =========================
-
+// HIGH CREATIVITY MODE
 async function creativeMode(prompt) {
-
-    return await generateTemperatureResponse(
-        prompt,
-        0.8,   // High creativity
-        150
-    );
+    return await generateTemperatureResponse(prompt, 0.9, 200);
 }
-
-
-// =========================
-// EXAMPLE USAGE
-// =========================
-
-// Focused factual answer
-// focusedMode("Tell me about Mars");
-
-// Creative answer
-// creativeMode("Tell me about Mars");
