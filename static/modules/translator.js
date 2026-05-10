@@ -10,122 +10,91 @@
 // - Future Malayalam support
 // - AI-powered translations
 
-async function translateText(
-    text,
-    targetLanguage
-) {
+async function translateText(text, targetLanguage = null) {
 
     try {
 
-        // Validate input
         if (!text || text.trim() === "") {
-
-            console.error("No text provided.");
-
             return "No text to translate.";
         }
 
-        // Validate language
-        if (!targetLanguage ||
-            targetLanguage.trim() === "") {
+        // =========================
+        // AUTO LANGUAGE TRIGGER DETECTION
+        // =========================
 
-            console.error(
-                "No target language provided."
-            );
+        const languageKeywords = {
+            german: "German",
+            spanish: "Spanish",
+            french: "French",
+            hindi: "Hindi",
+            malayalam: "Malayalam",
+            english: "English"
+        };
 
-            return "No target language.";
+        let detectedLanguage = targetLanguage;
+
+        // If no language passed, try detecting from text
+        if (!detectedLanguage) {
+
+            const lowerText = text.toLowerCase();
+
+            for (const key in languageKeywords) {
+
+                if (lowerText.includes(key)) {
+
+                    detectedLanguage = languageKeywords[key];
+
+                    break;
+                }
+            }
         }
 
-        // Translation prompt
-        const prompt = `
-Translate to ${targetLanguage}.
-Output only the translation,
-nothing else:
+        // Default fallback
+        if (!detectedLanguage) {
+            detectedLanguage = "English";
+        }
 
-${text}
+        // =========================
+        // CLEAN INPUT (remove trigger word)
+        // =========================
+
+        let cleanText = text;
+
+        for (const key in languageKeywords) {
+
+            const regex = new RegExp(`\\b${key}\\b`, "i");
+
+            cleanText = cleanText.replace(regex, "");
+        }
+
+        cleanText = cleanText.trim();
+
+        // =========================
+        // PROMPT
+        // =========================
+
+        const prompt = `
+Translate to ${detectedLanguage}.
+
+Output ONLY the translation.
+
+Text:
+${cleanText}
 `;
 
-        // Send request to AI
-        const translation =
-            await puter.ai.chat(
-                prompt,
-                {
-                    model: "gpt-5-nano"
-                }
-            );
-
-        console.log(
-            "Translation:",
-            translation
+        const translation = await puter.ai.chat(
+            prompt,
+            {
+                model: "gpt-5-nano"
+            }
         );
 
         return translation;
 
     } catch (error) {
 
-        console.error(
-            "Translation Error:",
-            error
-        );
+        console.error("Translation Error:", error);
 
         return "Translation failed.";
     }
 }
-
-
-// =========================
-// AUTO LANGUAGE DETECTION
-// =========================
-
-async function autoTranslate(
-    text,
-    targetLanguage
-) {
-
-    const prompt = `
-Detect the language and translate
-to ${targetLanguage}.
-
-Output only the translation.
-
-Text:
-${text}
-`;
-
-    try {
-
-        const response =
-            await puter.ai.chat(
-                prompt,
-                {
-                    model: "gpt-5-nano"
-                }
-            );
-
-        return response;
-
-    } catch (error) {
-
-        console.error(
-            "Auto Translation Error:",
-            error
-        );
-
-        return "Auto translation failed.";
-    }
-}
-
-
-// =========================
-// EXAMPLE USAGE
-// =========================
-
-// translateText(
-//     "Hello, how are you?",
-//     "Spanish"
-// );
-
-// autoTranslate(
-//     "സുഖമാണോ",
-//     "English"
-// );
