@@ -1,126 +1,108 @@
 // static/js/emo.js
 
 // =========================
-// PROJECT VIN - EMOTION SYSTEM
+// PROJECT VIN - EMOTION ENGINE
 // =========================
 
-// This module handles:
-// - Sentiment analysis
-// - Emotion detection
-// - Mood estimation
-// - Future adaptive personality systems
-
+// GLOBAL EMOTION ANALYZER (used across entire bot)
 async function analyzeEmotion(text) {
 
     try {
 
-        // Validate input
         if (!text || text.trim() === "") {
-
-            console.error("No text provided.");
-
             return {
                 sentiment: "neutral",
                 confidence: 0,
-                reasoning: "No text provided."
+                reasoning: "Empty input"
             };
         }
 
-        // Emotion analysis prompt
+        // =========================
+        // EMOTION PROMPT (STRICT JSON)
+        // =========================
+
         const prompt = `
-Analyze the sentiment of the following text.
+You are an emotion analysis system.
 
-Return your response as a JSON object
-with these fields:
+Analyze the sentiment of the text.
 
-- sentiment:
-"positive", "negative", or "neutral"
+Return ONLY valid JSON:
 
-- confidence:
-a number between 0 and 1
+{
+  "sentiment": "positive | negative | neutral | angry | excited | sad",
+  "confidence": 0.0 to 1.0,
+  "reasoning": "short explanation"
+}
 
-- reasoning:
-brief explanation of the sentiment
+Rules:
+- No extra text
+- No markdown
+- Only JSON output
 
 Text:
 ${text}
-
-Respond only with valid JSON.
-No additional text.
 `;
 
-        // Send request to AI
-        const response =
-            await puter.ai.chat(
-                prompt,
-                {
-                    model: "gpt-5-nano"
-                }
-            );
+        // =========================
+        // AI CALL
+        // =========================
 
-        // Parse JSON response
-        const analysis = JSON.parse(response);
+        const response = await puter.ai.chat(prompt, {
+            model: "gpt-5-nano"
+        });
 
-        console.log(
-            "Emotion Analysis:",
-            analysis
-        );
+        // =========================
+        // SAFE PARSE (IMPORTANT FIX)
+        // =========================
+
+        let analysis;
+
+        try {
+            analysis = JSON.parse(response);
+        } catch (e) {
+
+            console.error("JSON Parse Failed:", response);
+
+            return {
+                sentiment: "neutral",
+                confidence: 0.5,
+                reasoning: "Parse error fallback"
+            };
+        }
+
+        console.log("Emotion Analysis:", analysis);
 
         return analysis;
 
     } catch (error) {
 
-        console.error(
-            "Emotion System Error:",
-            error
-        );
+        console.error("Emotion System Error:", error);
 
         return {
             sentiment: "neutral",
             confidence: 0,
-            reasoning: "Emotion analysis failed."
+            reasoning: "Emotion system failure"
         };
     }
 }
 
 
 // =========================
-// MOOD DISPLAY HELPER
+// GLOBAL EMOTION DISPLAY
 // =========================
 
 function displayEmotion(analysis) {
 
     const emotionContainer =
-        document.getElementById(
-            "emotion-container"
-        );
+        document.getElementById("emotion-container");
 
-    if (!emotionContainer) return;
+    if (!emotionContainer || !analysis) return;
 
     emotionContainer.innerHTML = `
-        <strong>Sentiment:</strong>
-        ${analysis.sentiment}<br>
-
-        <strong>Confidence:</strong>
-        ${(analysis.confidence * 100)
-            .toFixed(1)}%<br>
-
-        <strong>Reasoning:</strong>
-        ${analysis.reasoning}
+        <div style="padding:10px; border-top:1px solid #333;">
+            <strong>Sentiment:</strong> ${analysis.sentiment}<br>
+            <strong>Confidence:</strong> ${(analysis.confidence * 100).toFixed(1)}%<br>
+            <strong>Reasoning:</strong> ${analysis.reasoning}
+        </div>
     `;
 }
-
-
-// =========================
-// EXAMPLE USAGE
-// =========================
-
-// (async () => {
-
-//     const result = await analyzeEmotion(
-//         "The service was okay, but the food was disappointing."
-//     );
-
-//     displayEmotion(result);
-
-// })();
