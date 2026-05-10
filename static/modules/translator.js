@@ -4,12 +4,6 @@
 // PROJECT VIN - TRANSLATOR
 // =========================
 
-// This module handles:
-// - Language translation
-// - Multi-language support
-// - Future Malayalam support
-// - AI-powered translations
-
 async function translateText(text, targetLanguage = null) {
 
     try {
@@ -19,68 +13,90 @@ async function translateText(text, targetLanguage = null) {
         }
 
         // =========================
-        // AUTO LANGUAGE TRIGGER DETECTION
+        // LANGUAGE MAP (SOURCE OF TRUTH)
         // =========================
 
-        const languageKeywords = {
-            german: "German",
-            spanish: "Spanish",
-            french: "French",
-            hindi: "Hindi",
-            malayalam: "Malayalam",
-            english: "English"
-        };
+        const languageMap = [
+            { key: "german", value: "German" },
+            { key: "spanish", value: "Spanish" },
+            { key: "french", value: "French" },
+            { key: "hindi", value: "Hindi" },
+            { key: "malayalam", value: "Malayalam" },
+            { key: "english", value: "English" }
+        ];
 
-        let detectedLanguage = targetLanguage;
+        let detectedLanguage = null;
 
-        // If no language passed, try detecting from text
-        if (!detectedLanguage) {
+        const lowerText = text.toLowerCase();
 
-            const lowerText = text.toLowerCase();
+        // =========================
+        // STEP 1: DETECT LANGUAGE FROM TEXT
+        // =========================
 
-            for (const key in languageKeywords) {
-
-                if (lowerText.includes(key)) {
-
-                    detectedLanguage = languageKeywords[key];
-
-                    break;
-                }
+        for (let lang of languageMap) {
+            if (lowerText.includes(lang.key)) {
+                detectedLanguage = lang.value;
+                break;
             }
         }
 
-        // Default fallback
+        // =========================
+        // STEP 2: PRIORITY RULE
+        // UI language > detected language > default
+        // =========================
+
+        if (targetLanguage) {
+            detectedLanguage = targetLanguage;
+        }
+
         if (!detectedLanguage) {
             detectedLanguage = "English";
         }
 
         // =========================
-        // CLEAN INPUT (remove trigger word)
+        // STEP 3: CLEAN INPUT TEXT
+        // remove language trigger words
         // =========================
 
         let cleanText = text;
 
-        for (const key in languageKeywords) {
+        for (let lang of languageMap) {
 
-            const regex = new RegExp(`\\b${key}\\b`, "i");
+            const regex = new RegExp(`\\b${lang.key}\\b`, "gi");
 
             cleanText = cleanText.replace(regex, "");
         }
 
-        cleanText = cleanText.trim();
+        cleanText = cleanText.replace(/\s+/g, " ").trim();
 
         // =========================
-        // PROMPT
+        // DEBUG (KEEP FOR TESTING)
+        // =========================
+
+        console.log("Detected Language:", detectedLanguage);
+        console.log("Clean Text:", cleanText);
+
+        // =========================
+        // STEP 4: PROMPT ENGINEERING
         // =========================
 
         const prompt = `
-Translate to ${detectedLanguage}.
+You are a professional translator.
 
-Output ONLY the translation.
+Translate the text into: ${detectedLanguage}
+
+Rules:
+- Output ONLY the translation
+- No explanations
+- No extra text
 
 Text:
 ${cleanText}
 `;
+
+        // =========================
+        // STEP 5: AI CALL
+        // =========================
 
         const translation = await puter.ai.chat(
             prompt,
