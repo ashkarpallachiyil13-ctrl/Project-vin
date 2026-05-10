@@ -1,0 +1,185 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0f0f0f;
+    color: white;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 100%;
+    background: #161616;
+    border-bottom: 1px solid #2d2d2d;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.sidebar::-webkit-scrollbar {
+    display: none;
+}
+
+.logo {
+    color: cyan;
+    margin-right: 15px;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.sidebar button {
+    background: #222;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+    min-width: fit-content;
+    font-size: 14px;
+}
+
+.sidebar button:hover {
+    background: #333;
+}
+
+.main-panel {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 12px;
+}
+
+.chat-box {
+    flex: 1;
+
+    background: #151515;
+
+    border: 1px solid #2d2d2d;
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    overflow-y: auto;
+
+    margin-bottom: 15px;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+}
+
+.input-area input {
+    flex: 1;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #1d1d1d;
+
+    color: white;
+}
+
+.input-area button {
+    background: cyan;
+
+    color: black;
+
+    border: none;
+
+    padding: 14px 20px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.you {
+    color: cyan;
+    margin-bottom: 15px;
+}
+
+.vin {
+    color: lime;
+    margin-bottom: 25px;
+}
+
+.system {
+    color: orange;
+    margin-bottom: 15px;
+}
+
+#image-container img {
+    margin-top: 15px;
+    max-width: 100%;
+    border-radius: 15px;
+}
+
+#voice-container {
+    margin-top: 15px;
+}
+
+#emotion-container {
+    margin-top: 15px;
+    color: pink;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    background: #111;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+
+    .main-panel {
+        padding: 10px;
+    }
+
+    .chat-box {
+        border-radius: 12px;
+        font-size: 15px;
+    }
+
+    .input-area {
+        gap: 8px;
+    }
+
+    .input-area input {
+        font-size: 16px;
+    }
+
+    .input-area button {
+        min-width: 80px;
+        font-size: 15px;
+    }
+}
