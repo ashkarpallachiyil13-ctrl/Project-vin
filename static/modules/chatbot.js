@@ -8,7 +8,7 @@ async function sendMessage(userMessage) {
         const response = await puter.ai.chat(
             userMessage,
             {
-                model: "gpt-5.5-pro"
+                model: "gemini-3.5-flash"
             }
         );
 
