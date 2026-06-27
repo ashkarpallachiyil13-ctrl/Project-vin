@@ -96,7 +96,6 @@ def chat():
         }), 500
 
     except Exception as e:
-
     import traceback
     print("🔥 FULL ERROR:")
     traceback.print_exc()
