@@ -1,6 +1,6 @@
 /* ==========================================
-           A.R.G.U.S. v1.0 Theme
-         Official Black & Cyan UI
+           A.R.G.U.S. v1.0.1 Theme
+         Black & Cyan Console UI
 ========================================== */
 
 *{
@@ -12,12 +12,12 @@
 body{
     background:#000000;
     color:#FFFFFF;
-    font-family:Arial,Helvetica,sans-serif;
+    font-family:Arial, Helvetica, sans-serif;
     height:100vh;
 }
 
 /* ===========================
-      MAIN CONTAINER
+      APP CONTAINER
 =========================== */
 
 .app-container{
@@ -27,91 +27,71 @@ body{
 }
 
 /* ===========================
-        TOP BAR
+        TOP BAR (FIXED)
 =========================== */
 
 .sidebar{
-
     width:100%;
-
     background:#000000;
 
-    border-bottom:2px solid #4CC9F0;
-
-    padding:14px;
-
     display:flex;
-    flex-direction:row;
+    align-items:center;
     gap:12px;
+
+    padding:12px 16px;
 
     overflow-x:auto;
     scrollbar-width:none;
 
-    box-shadow:0 0 15px rgba(76,201,240,.18);
+    border-bottom:2px solid #4CC9F0;
+
+    box-shadow:0 0 15px rgba(76,201,240,.20);
 }
 
 .sidebar::-webkit-scrollbar{
     display:none;
 }
 
-/* ===========================
-          LOGO
-=========================== */
+/* LOGO */
 
 .logo{
-
     color:#90E0EF;
-
     font-size:22px;
-
     font-weight:bold;
-
-    letter-spacing:4px;
-
+    letter-spacing:5px;
     text-transform:uppercase;
-
     white-space:nowrap;
 
-    margin-right:20px;
+    margin-right:18px;
 
     text-shadow:
-        0 0 8px rgba(76,201,240,.55);
+        0 0 10px rgba(76,201,240,.6);
 }
 
-/* ===========================
-        TOP BUTTONS
-=========================== */
+/* BUTTONS */
 
 .sidebar button{
-
     background:#111111;
-
     color:#90E0EF;
 
     border:1px solid #4CC9F0;
 
+    padding:10px 14px;
     border-radius:12px;
-
-    padding:10px 16px;
 
     cursor:pointer;
 
     transition:.25s;
 
     white-space:nowrap;
-
     font-size:14px;
 }
 
 .sidebar button:hover{
-
     background:#4CC9F0;
-
     color:#000000;
 
-    box-shadow:
-        0 0 15px rgba(76,201,240,.7);
-
+    box-shadow:0 0 15px rgba(76,201,240,.7);
     transform:translateY(-2px);
 }
 
@@ -120,28 +100,21 @@ body{
 =========================== */
 
 .main-panel{
-
     flex:1;
-
     display:flex;
-
     flex-direction:column;
-
     padding:14px;
 }
 
 /* ===========================
-        CHAT AREA
+        CHAT BOX
 =========================== */
 
 .chat-box{
-
     flex:1;
 
     background:#050505;
-
     border:1px solid #4CC9F0;
-
     border-radius:18px;
 
     padding:18px;
@@ -150,8 +123,7 @@ body{
 
     margin-bottom:15px;
 
-    box-shadow:
-        0 0 15px rgba(76,201,240,.15);
+    box-shadow:0 0 15px rgba(76,201,240,.15);
 }
 
 /* ===========================
@@ -159,65 +131,48 @@ body{
 =========================== */
 
 .input-area{
-
     display:flex;
-
     gap:12px;
 }
 
-/* ===========================
-        TEXT BOX
-=========================== */
+/* INPUT */
 
 .input-area input{
-
     flex:1;
 
     background:#90E0EF;
-
     color:#000000;
 
     border:none;
-
     outline:none;
 
     padding:15px 18px;
-
     border-radius:30px;
 
     font-size:16px;
 
-    transition:.25s;
+    box-shadow:0 0 12px rgba(76,201,240,.25);
 
-    box-shadow:
-        0 0 12px rgba(76,201,240,.25);
+    transition:.25s;
 }
 
 .input-area input::placeholder{
-
     color:#2a2a2a;
 }
 
 .input-area input:focus{
-
-    box-shadow:
-        0 0 18px rgba(76,201,240,.8);
+    box-shadow:0 0 18px rgba(76,201,240,.8);
 }
 
-/* ===========================
-        SEND BUTTON
-=========================== */
+/* BUTTON */
 
 .input-area button{
-
     background:#4CC9F0;
-
     color:#000000;
 
     border:none;
 
     padding:15px 22px;
-
     border-radius:30px;
 
     cursor:pointer;
@@ -226,18 +181,13 @@ body{
 
     transition:.25s;
 
-    box-shadow:
-        0 0 12px rgba(76,201,240,.4);
+    box-shadow:0 0 12px rgba(76,201,240,.4);
 }
 
 .input-area button:hover{
-
     background:#90E0EF;
-
     transform:scale(1.05);
-
-    box-shadow:
-        0 0 20px rgba(76,201,240,.8);
+    box-shadow:0 0 20px rgba(76,201,240,.8);
 }
 
 /* ===========================
@@ -245,23 +195,17 @@ body{
 =========================== */
 
 .you{
-
     color:#4CC9F0;
-
     margin-bottom:15px;
 }
 
 .vin{
-
     color:#90E0EF;
-
     margin-bottom:25px;
 }
 
 .system{
-
     color:#FFD166;
-
     margin-bottom:15px;
 }
 
@@ -270,29 +214,22 @@ body{
 =========================== */
 
 #image-container img{
-
     margin-top:15px;
-
     max-width:100%;
-
     border-radius:15px;
-
     border:1px solid #4CC9F0;
 }
 
 /* ===========================
-        EXTRA CONTAINERS
+        EXTRA
 =========================== */
 
 #voice-container{
-
     margin-top:15px;
 }
 
 #emotion-container{
-
     margin-top:15px;
-
     color:#90E0EF;
 }
 
@@ -301,19 +238,14 @@ body{
 =========================== */
 
 pre{
-
     white-space:pre-wrap;
-
     word-wrap:break-word;
-
-    overflow-x:auto;
 
     background:#0A0A0A;
 
     border-left:4px solid #4CC9F0;
 
     padding:15px;
-
     border-radius:12px;
 
     margin-top:12px;
@@ -324,24 +256,19 @@ pre{
 =========================== */
 
 ::-webkit-scrollbar{
-
     width:7px;
 }
 
 ::-webkit-scrollbar-track{
-
     background:#000000;
 }
 
 ::-webkit-scrollbar-thumb{
-
     background:#4CC9F0;
-
     border-radius:20px;
 }
 
 ::-webkit-scrollbar-thumb:hover{
-
     background:#90E0EF;
 }
 
@@ -352,38 +279,29 @@ pre{
 @media(max-width:768px){
 
     .main-panel{
-
         padding:10px;
     }
 
     .chat-box{
-
         border-radius:14px;
-
         font-size:15px;
     }
 
     .input-area{
-
         gap:8px;
     }
 
     .input-area input{
-
         font-size:16px;
     }
 
     .input-area button{
-
         min-width:70px;
-
         font-size:15px;
     }
 
     .logo{
-
         font-size:18px;
-
-        letter-spacing:2px;
+        letter-spacing:3px;
     }
 }
