@@ -94,7 +94,7 @@
 
 </main>
 
-</div><script src="https://js.puter.com/v2/"></script><!-- MODULES --><script src="{{ url_for('static', filename='modules/chatbot.js') }}"></script><script src="{{ url_for('static', filename='modules/image_gen.js') }}"></script><script src="{{ url_for('static', filename='modules/image_analysis.js') }}"></script><script src="{{ url_for('static', filename='modules/stream.js') }}"></script><script src="{{ url_for('static', filename='modules/temp.js') }}"></script><script src="{{ url_for('static', filename='modules/web.js') }}"></script><script src="{{ url_for('static', filename='modules/voice.js') }}"></script><script src="{{ url_for('static', filename='modules/codex.js') }}"></script><script src="{{ url_for('static', filename='modules/translator.js') }}"></script><script src="{{ url_for('static', filename='modules/emo.js') }}"></script><script>
+</div><!-- MODULES --><script src="{{ url_for('static', filename='modules/memory.js') }}"></script><script src="{{ url_for('static', filename='modules/chatbot.js') }}"></script><script>
 
 let statusElement = null;
 
@@ -143,67 +143,28 @@ function clearStatus() {
 async function handleMainAction() {
 
     const input = document.getElementById("user-input");
-    const text = input.value;
+    const text = input.value.trim();
 
-    if (!text.trim()) return;
+    if (!text) return;
 
     addMessage("you", text);
     input.value = "";
 
     try {
 
-        const intent = detectIntent(text);
-        const emotion = await analyzeEmotion(text);
+        showStatus("Thinking...");
 
-        // =====================
-        // IMAGE MODE
-        // =====================
-        if (intent === "image") {
+        // Save user message
+        Memory.add("user", text);
 
-            showStatus("Generating image...");
+        // Send to OpenRouter
+        const response = await chatWithAI(
+            text,
+            Memory.get()
+        );
 
-            const img = await generateImage(text);
-
-            clearStatus();
-
-            const chatBox = document.getElementById("chat-box");
-            const div = document.createElement("div");
-
-            div.className = "message vin";
-            div.innerHTML = `<strong>Vin:</strong><br>`;
-            div.appendChild(img);
-
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            return;
-        }
-
-        // =====================
-        // TRANSLATE MODE
-        // =====================
-        if (intent === "translate") {
-
-            showStatus("Translating...");
-
-            const translated = await translateText(text);
-
-            clearStatus();
-
-            addMessage("vin", translated);
-
-            return;
-        }
-
-        // =====================
-        // CHAT MODE
-        // =====================
-
-        showStatus("Typing...");
-
-        const response = await puter.ai.chat(text, {
-            model: "gpt-5.4-nano"
-        });
+        // Save AI reply
+        Memory.add("assistant", response);
 
         clearStatus();
 
@@ -212,35 +173,14 @@ async function handleMainAction() {
     } catch (err) {
 
         console.error(err);
+
         clearStatus();
+
         addMessage("vin", "Error occurred.");
+
     }
 }
 
-// =========================
-// INTENT DETECTOR
-// =========================
-
-function detectIntent(text) {
-
-    const t = text.toLowerCase();
-
-    if (
-        t.includes("generate image") ||
-        t.includes("create image") ||
-        t.includes("draw") ||
-        t.includes("show me")
-    ) return "image";
-
-    if (
-        t.includes("how do i say") ||
-        t.includes("in german") ||
-        t.includes("in french") ||
-        t.includes("in spanish")
-    ) return "translate";
-
-    return "chat";
-}
 
 // ENTER SUPPORT
 
