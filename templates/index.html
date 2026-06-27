@@ -32,7 +32,7 @@
 <script>
 let statusElement = null;
 
-// safer text rendering (no innerHTML injection bugs)
+// MESSAGE
 function addMessage(sender, text) {
 
     const chatBox = document.getElementById("chat-box");
@@ -87,11 +87,8 @@ async function handleMainAction() {
 
         showStatus("Thinking...");
 
-        Memory.add("user", text);
-
-        const response = await chatWithAI(text, Memory.get());
-
-        Memory.add("assistant", response);
+        // 🚨 NO MEMORY NOW
+        const response = await chatWithAI(text, []);
 
         clearStatus();
 
@@ -99,12 +96,11 @@ async function handleMainAction() {
 
     } catch (err) {
 
-        console.error(err);
+        console.error("FULL ERROR:", err);
 
         clearStatus();
 
-        addMessage("vin", "Error occurred.");
-
+        addMessage("vin", err.message || "Error occurred.");
     }
 }
 
