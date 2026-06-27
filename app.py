@@ -34,6 +34,7 @@ def chat():
 
     data = request.get_json()
 
+    history = data.get("history", [])
     user_message = data.get("message", "").strip()
 
     if not user_message:
@@ -43,24 +44,28 @@ def chat():
 
     try:
 
-        response = requests.post(
+        # Build conversation history
+        messages = history + [
+            {
+                "role": "user",
+                "content": user_message
+            }
+        ]
 
+        response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
 
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost:5000",
+                "X-Title": "Project Vin"
             },
 
             json={
                 "model": "openai/gpt-oss-120b:free",
 
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": user_message
-                    }
-                ],
+                "messages": messages,
 
                 "reasoning": {
                     "enabled": True
@@ -78,6 +83,17 @@ def chat():
         return jsonify({
             "reply": reply
         })
+
+    except requests.exceptions.HTTPError:
+
+        try:
+            print(response.json())
+        except Exception:
+            print(response.text)
+
+        return jsonify({
+            "reply": "OpenRouter returned an error."
+        }), 500
 
     except Exception as e:
 
