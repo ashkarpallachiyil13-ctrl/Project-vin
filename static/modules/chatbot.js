@@ -4,19 +4,25 @@ async function sendMessage(userMessage) {
 
     try {
 
-        // Send message to Puter AI
-        const response = await puter.ai.chat(
-            userMessage,
-            {
-                model: "gemini-3.5-flash"
-            }
-        );
+        const response = await fetch("/chat", {
 
-        // Print response
-        console.log(response);
+            method: "POST",
 
-        // Return response
-        return response;
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                message: userMessage
+            })
+
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+
+        return data.reply;
 
     } catch (error) {
 
@@ -25,4 +31,5 @@ async function sendMessage(userMessage) {
         return "Something went wrong.";
 
     }
+
 }
