@@ -1,7 +1,6 @@
-# app.py
-
 import os
 import requests
+import traceback
 
 from flask import Flask, render_template, request, jsonify
 
@@ -24,7 +23,6 @@ if not OPENROUTER_API_KEY:
 def home():
     return render_template("index.html")
 
-
 # =========================
 # CHAT API
 # =========================
@@ -32,97 +30,93 @@ def home():
 @app.route("/chat", methods=["POST"])
 def chat():
 
-    data = request.get_json()
+    try:
+        data = request.get_json() or {}
 
-    history = data.get("history", [])
-    user_message = data.get("message", "").strip()
+        history = data.get("history", [])
+        user_message = data.get("message", "").strip()
 
-    if not user_message:
-        return jsonify({
-            "reply": "Please enter a message."
+        if not user_message:
+            return jsonify({
+                "reply": "Please enter a message."
+            })
+
+        # Ensure history is safe
+        if not isinstance(history, list):
+            history = []
+
+        # Build messages safely
+        messages = []
+
+        for m in history:
+            if isinstance(m, dict) and "role" in m and "content" in m:
+                messages.append({
+                    "role": m["role"],
+                    "content": m["content"]
+                })
+
+        messages.append({
+            "role": "user",
+            "content": user_message
         })
 
-    try:
-
-        # Build conversation history
-        messages = history + [
-            {
-                "role": "user",
-                "content": user_message
-            }
-        ]
-
+        # API CALL
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
-
             headers={
                 "Authorization": f"Bearer {OPENROUTER_API_KEY}",
                 "Content-Type": "application/json",
                 "HTTP-Referer": "http://localhost:5000",
                 "X-Title": "Project Vin"
             },
-
             json={
-                "model": "openai/gpt-oss-120b:free",
-
-                "messages": messages,
-
-                "reasoning": {
-                    "enabled": True
-                }
-            }
-
+                "model": "meta-llama/llama-3.1-8b-instruct:free",
+                "messages": messages
+            },
+            timeout=30
         )
 
         response.raise_for_status()
 
         result = response.json()
-
         reply = result["choices"][0]["message"]["content"]
 
-        return jsonify({
-            "reply": reply
-        })
+        return jsonify({"reply": reply})
 
-        except requests.exceptions.HTTPError:
-
+    except requests.exceptions.HTTPError as e:
+        print("🔥 HTTP ERROR:", e)
         try:
-            print(response.json())
-        except Exception:
             print(response.text)
+        except:
+            pass
 
         return jsonify({
-            "reply": "OpenRouter returned an error."
+            "reply": "OpenRouter returned an HTTP error."
         }), 500
 
-
     except Exception as e:
-
-        import traceback
         print("🔥 FULL ERROR:")
         traceback.print_exc()
 
         return jsonify({
             "reply": f"SERVER ERROR: {str(e)}"
         }), 500
+
 # =========================
 # HEALTH CHECK
 # =========================
 
 @app.route("/health")
 def health():
-
     return jsonify({
         "status": "ARGUS Online"
     })
-
 
 # =========================
 # RUN SERVER
 # =========================
 
 if __name__ == "__main__":
-
     port = int(os.environ.get("PORT", 5000))
 
     app.run(
