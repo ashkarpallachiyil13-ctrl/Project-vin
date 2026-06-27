@@ -1,6 +1,8 @@
 # app.py
 
 import os
+import requests
+
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -11,7 +13,6 @@ app = Flask(__name__)
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-# Optional: Warn if missing
 if not OPENROUTER_API_KEY:
     print("WARNING: OPENROUTER_API_KEY is not set!")
 
@@ -40,12 +41,51 @@ def chat():
             "reply": "Please enter a message."
         })
 
-    # TODO:
-    # We'll call OpenRouter here in the next step.
+    try:
 
-    return jsonify({
-        "reply": f"You said: {user_message}"
-    })
+        response = requests.post(
+
+            "https://openrouter.ai/api/v1/chat/completions",
+
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+            },
+
+            json={
+                "model": "openai/gpt-oss-120b:free",
+
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": user_message
+                    }
+                ],
+
+                "reasoning": {
+                    "enabled": True
+                }
+            }
+
+        )
+
+        response.raise_for_status()
+
+        result = response.json()
+
+        reply = result["choices"][0]["message"]["content"]
+
+        return jsonify({
+            "reply": reply
+        })
+
+    except Exception as e:
+
+        print(e)
+
+        return jsonify({
+            "reply": "Sorry, something went wrong."
+        }), 500
 
 
 # =========================
@@ -54,6 +94,7 @@ def chat():
 
 @app.route("/health")
 def health():
+
     return jsonify({
         "status": "ARGUS Online"
     })
