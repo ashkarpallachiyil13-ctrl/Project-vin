@@ -26,25 +26,31 @@ def home():
 # =========================
 # CHAT API
 # =========================
+
 @app.route("/chat", methods=["POST"])
 def chat():
 
     try:
         data = request.get_json() or {}
+
         print("📩 RAW DATA:", data)
 
-        history = data.get("history", [])
         user_message = data.get("message", "").strip()
+        history = data.get("history", [])
 
         print("💬 MESSAGE:", user_message)
         print("🧠 HISTORY:", history)
 
+        if not user_message:
+            return jsonify({"reply": "Empty message"}), 400
+
+        # Build safe messages
         messages = [{
             "role": "user",
             "content": user_message
         }]
 
-        print("🚀 SENDING TO OPENROUTER:", messages)
+        print("🚀 SENDING:", messages)
 
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
@@ -55,46 +61,14 @@ def chat():
                 "X-Title": "Project Vin"
             },
             json={
-                "model": "meta-llama/llama-3.1-8b-instruct:free",
+                "model": "openai/gpt-4o-mini",
                 "messages": messages
             },
             timeout=30
         )
 
-        print("📡 STATUS CODE:", response.status_code)
-        print("📡 RESPONSE TEXT:", response.text)
-
-        response.raise_for_status()
-
-        result = response.json()
-        reply = result["choices"][0]["message"]["content"]
-
-        return jsonify({"reply": reply})
-
-    except Exception as e:
-        import traceback
-        print("🔥 FULL ERROR TRACE:")
-        traceback.print_exc()
-
-        return jsonify({
-            "reply": f"CRASH: {str(e)}"
-        }), 500
-
-        # API CALL
-        response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost:5000",
-                "X-Title": "Project Vin"
-            },
-            json={
-                "model": "meta-llama/llama-3.1-8b-instruct:free",
-                "messages": messages
-            },
-            timeout=30
-        )
+        print("📡 STATUS:", response.status_code)
+        print("📡 RESPONSE:", response.text)
 
         response.raise_for_status()
 
@@ -106,16 +80,16 @@ def chat():
     except requests.exceptions.HTTPError as e:
         print("🔥 HTTP ERROR:", e)
         try:
-            print(response.text)
+            print("RAW:", response.text)
         except:
             pass
 
         return jsonify({
-            "reply": "OpenRouter returned an HTTP error."
+            "reply": "OpenRouter HTTP error"
         }), 500
 
     except Exception as e:
-        print("🔥 FULL ERROR:")
+        print("🔥 FULL ERROR TRACE:")
         traceback.print_exc()
 
         return jsonify({
@@ -128,9 +102,7 @@ def chat():
 
 @app.route("/health")
 def health():
-    return jsonify({
-        "status": "ARGUS Online"
-    })
+    return jsonify({"status": "ARGUS Online"})
 
 # =========================
 # RUN SERVER
