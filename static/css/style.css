@@ -1,185 +1,389 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* ==========================================
+           A.R.G.U.S. v1.0 Theme
+         Official Black & Cyan UI
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-body {
-    background: #0f0f0f;
-    color: white;
-    font-family: Arial, sans-serif;
-    height: 100vh;
+body{
+    background:#000000;
+    color:#FFFFFF;
+    font-family:Arial,Helvetica,sans-serif;
+    height:100vh;
 }
 
-.app-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+/* ===========================
+      MAIN CONTAINER
+=========================== */
+
+.app-container{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
 }
 
-.sidebar {
-    width: 100%;
-    background: #161616;
-    border-bottom: 1px solid #2d2d2d;
-    padding: 12px;
+/* ===========================
+        TOP BAR
+=========================== */
 
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+.sidebar{
 
-    overflow-x: auto;
-    scrollbar-width: none;
+    width:100%;
+
+    background:#000000;
+
+    border-bottom:2px solid #4CC9F0;
+
+    padding:14px;
+
+    display:flex;
+    flex-direction:row;
+    gap:12px;
+
+    overflow-x:auto;
+    scrollbar-width:none;
+
+    box-shadow:0 0 15px rgba(76,201,240,.18);
 }
 
-.sidebar::-webkit-scrollbar {
-    display: none;
+.sidebar::-webkit-scrollbar{
+    display:none;
 }
 
-.logo {
-    color: cyan;
-    margin-right: 15px;
-    font-size: 18px;
-    white-space: nowrap;
+/* ===========================
+          LOGO
+=========================== */
+
+.logo{
+
+    color:#90E0EF;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    letter-spacing:4px;
+
+    text-transform:uppercase;
+
+    white-space:nowrap;
+
+    margin-right:20px;
+
+    text-shadow:
+        0 0 8px rgba(76,201,240,.55);
 }
 
-.sidebar button {
-    background: #222;
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.2s;
-    white-space: nowrap;
-    min-width: fit-content;
-    font-size: 14px;
+/* ===========================
+        TOP BUTTONS
+=========================== */
+
+.sidebar button{
+
+    background:#111111;
+
+    color:#90E0EF;
+
+    border:1px solid #4CC9F0;
+
+    border-radius:12px;
+
+    padding:10px 16px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    white-space:nowrap;
+
+    font-size:14px;
 }
 
-.sidebar button:hover {
-    background: #333;
+.sidebar button:hover{
+
+    background:#4CC9F0;
+
+    color:#000000;
+
+    box-shadow:
+        0 0 15px rgba(76,201,240,.7);
+
+    transform:translateY(-2px);
 }
 
-.main-panel {
-    flex: 1;
+/* ===========================
+        MAIN PANEL
+=========================== */
 
-    display: flex;
-    flex-direction: column;
+.main-panel{
 
-    padding: 12px;
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    padding:14px;
 }
 
-.chat-box {
-    flex: 1;
+/* ===========================
+        CHAT AREA
+=========================== */
 
-    background: #151515;
+.chat-box{
 
-    border: 1px solid #2d2d2d;
+    flex:1;
 
-    border-radius: 15px;
+    background:#050505;
 
-    padding: 15px;
+    border:1px solid #4CC9F0;
 
-    overflow-y: auto;
+    border-radius:18px;
 
-    margin-bottom: 15px;
+    padding:18px;
+
+    overflow-y:auto;
+
+    margin-bottom:15px;
+
+    box-shadow:
+        0 0 15px rgba(76,201,240,.15);
 }
 
-.input-area {
-    display: flex;
-    gap: 10px;
+/* ===========================
+        INPUT AREA
+=========================== */
+
+.input-area{
+
+    display:flex;
+
+    gap:12px;
 }
 
-.input-area input {
-    flex: 1;
+/* ===========================
+        TEXT BOX
+=========================== */
 
-    padding: 14px;
+.input-area input{
 
-    border: none;
+    flex:1;
 
-    border-radius: 10px;
+    background:#90E0EF;
 
-    background: #1d1d1d;
+    color:#000000;
 
-    color: white;
+    border:none;
+
+    outline:none;
+
+    padding:15px 18px;
+
+    border-radius:30px;
+
+    font-size:16px;
+
+    transition:.25s;
+
+    box-shadow:
+        0 0 12px rgba(76,201,240,.25);
 }
 
-.input-area button {
-    background: cyan;
+.input-area input::placeholder{
 
-    color: black;
-
-    border: none;
-
-    padding: 14px 20px;
-
-    border-radius: 10px;
-
-    cursor: pointer;
-
-    font-weight: bold;
+    color:#2a2a2a;
 }
 
-.you {
-    color: cyan;
-    margin-bottom: 15px;
+.input-area input:focus{
+
+    box-shadow:
+        0 0 18px rgba(76,201,240,.8);
 }
 
-.vin {
-    color: lime;
-    margin-bottom: 25px;
+/* ===========================
+        SEND BUTTON
+=========================== */
+
+.input-area button{
+
+    background:#4CC9F0;
+
+    color:#000000;
+
+    border:none;
+
+    padding:15px 22px;
+
+    border-radius:30px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:.25s;
+
+    box-shadow:
+        0 0 12px rgba(76,201,240,.4);
 }
 
-.system {
-    color: orange;
-    margin-bottom: 15px;
+.input-area button:hover{
+
+    background:#90E0EF;
+
+    transform:scale(1.05);
+
+    box-shadow:
+        0 0 20px rgba(76,201,240,.8);
 }
 
-#image-container img {
-    margin-top: 15px;
-    max-width: 100%;
-    border-radius: 15px;
+/* ===========================
+        CHAT COLORS
+=========================== */
+
+.you{
+
+    color:#4CC9F0;
+
+    margin-bottom:15px;
 }
 
-#voice-container {
-    margin-top: 15px;
+.vin{
+
+    color:#90E0EF;
+
+    margin-bottom:25px;
 }
 
-#emotion-container {
-    margin-top: 15px;
-    color: pink;
+.system{
+
+    color:#FFD166;
+
+    margin-bottom:15px;
 }
 
-pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    overflow-x: auto;
-    background: #111;
-    padding: 10px;
-    border-radius: 10px;
-    margin-top: 10px;
+/* ===========================
+        IMAGE OUTPUT
+=========================== */
+
+#image-container img{
+
+    margin-top:15px;
+
+    max-width:100%;
+
+    border-radius:15px;
+
+    border:1px solid #4CC9F0;
 }
 
-@media (max-width: 768px) {
+/* ===========================
+        EXTRA CONTAINERS
+=========================== */
 
-    .main-panel {
-        padding: 10px;
+#voice-container{
+
+    margin-top:15px;
+}
+
+#emotion-container{
+
+    margin-top:15px;
+
+    color:#90E0EF;
+}
+
+/* ===========================
+        CODE BLOCKS
+=========================== */
+
+pre{
+
+    white-space:pre-wrap;
+
+    word-wrap:break-word;
+
+    overflow-x:auto;
+
+    background:#0A0A0A;
+
+    border-left:4px solid #4CC9F0;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    margin-top:12px;
+}
+
+/* ===========================
+        SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar{
+
+    width:7px;
+}
+
+::-webkit-scrollbar-track{
+
+    background:#000000;
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#4CC9F0;
+
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#90E0EF;
+}
+
+/* ===========================
+        MOBILE
+=========================== */
+
+@media(max-width:768px){
+
+    .main-panel{
+
+        padding:10px;
     }
 
-    .chat-box {
-        border-radius: 12px;
-        font-size: 15px;
+    .chat-box{
+
+        border-radius:14px;
+
+        font-size:15px;
     }
 
-    .input-area {
-        gap: 8px;
+    .input-area{
+
+        gap:8px;
     }
 
-    .input-area input {
-        font-size: 16px;
+    .input-area input{
+
+        font-size:16px;
     }
 
-    .input-area button {
-        min-width: 80px;
-        font-size: 15px;
+    .input-area button{
+
+        min-width:70px;
+
+        font-size:15px;
+    }
+
+    .logo{
+
+        font-size:18px;
+
+        letter-spacing:2px;
     }
 }
