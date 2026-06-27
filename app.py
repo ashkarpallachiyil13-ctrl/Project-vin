@@ -84,7 +84,7 @@ def chat():
             "reply": reply
         })
 
-    except requests.exceptions.HTTPError:
+        except requests.exceptions.HTTPError:
 
         try:
             print(response.json())
@@ -95,15 +95,16 @@ def chat():
             "reply": "OpenRouter returned an error."
         }), 500
 
+
     except Exception as e:
-    import traceback
-    print("🔥 FULL ERROR:")
-    traceback.print_exc()
 
-    return jsonify({
-        "reply": f"SERVER ERROR: {str(e)}"
-    }), 500
+        import traceback
+        print("🔥 FULL ERROR:")
+        traceback.print_exc()
 
+        return jsonify({
+            "reply": f"SERVER ERROR: {str(e)}"
+        }), 500
 # =========================
 # HEALTH CHECK
 # =========================
