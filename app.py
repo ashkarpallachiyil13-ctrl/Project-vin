@@ -97,12 +97,13 @@ def chat():
 
     except Exception as e:
 
-        print(e)
+    import traceback
+    print("🔥 FULL ERROR:")
+    traceback.print_exc()
 
-        return jsonify({
-            "reply": "Sorry, something went wrong."
-        }), 500
-
+    return jsonify({
+        "reply": f"SERVER ERROR: {str(e)}"
+    }), 500
 
 # =========================
 # HEALTH CHECK
