@@ -1,307 +1,296 @@
-/* ==========================================
-           A.R.G.U.S. v1.0.1 Theme
-         Black & Cyan Console UI
-========================================== */
+ @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap');
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+  :root{
+    --bg: #050709;
+    --surface: #0d1218;
+    --surface-2: #11181f;
+    --blue: #5fc7f2;
+    --blue-bright: #8fdcff;
+    --blue-dim: #3a8fb5;
+    --text: #dfeef6;
+    --text-muted: #5e7280;
+    --glow: rgba(95,199,242,0.55);
+  }
 
-body{
-    background:#000000;
-    color:#FFFFFF;
-    font-family:Arial, Helvetica, sans-serif;
-    height:100vh;
-}
+  *{ box-sizing: border-box; }
 
-/* ===========================
-      APP CONTAINER
-=========================== */
+  html, body{
+    margin:0; padding:0; height:100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow:hidden;
+  }
 
-.app-container{
+  .app{
     display:flex;
     flex-direction:column;
     height:100vh;
-}
+    max-width: 720px;
+    margin: 0 auto;
+    background:
+      radial-gradient(ellipse at top, rgba(95,199,242,0.05), transparent 60%),
+      var(--bg);
+    border-left: 1px solid #0f1620;
+    border-right: 1px solid #0f1620;
+  }
 
-/* ===========================
-        TOP BAR (FIXED)
-=========================== */
-
-.sidebar{
-    width:100%;
-    background:#000000;
-
+  /* ---- TOP BAR ---- */
+  .topbar{
+    position:relative;
     display:flex;
     align-items:center;
-    gap:12px;
+    justify-content:space-between;
+    padding: 16px 20px;
+    background: linear-gradient(180deg, #0a0e13, #070a0d);
+    border-bottom: 1px solid var(--blue-dim);
+    box-shadow: 0 1px 0 var(--blue-dim), 0 4px 18px -4px var(--glow);
+    flex-shrink:0;
+  }
 
-    padding:12px 16px;
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
 
-    overflow-x:auto;
-    scrollbar-width:none;
+  .brand-dot{
+    width:8px; height:8px;
+    border-radius:50%;
+    background: var(--blue-bright);
+    box-shadow: 0 0 8px 2px var(--glow);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
 
-    border-bottom:2px solid #4CC9F0;
+  @keyframes pulse{
+    0%,100%{ opacity:1; transform:scale(1); }
+    50%{ opacity:.45; transform:scale(.78); }
+  }
 
-    box-shadow:0 0 15px rgba(76,201,240,.20);
-}
+  .brand-title{
+    font-family: 'Share Tech Mono', monospace;
+    font-weight:700;
+    font-size: 19px;
+    letter-spacing: 4px;
+    color: var(--blue-bright);
+    text-shadow: 0 0 14px var(--glow);
+  }
 
-.sidebar::-webkit-scrollbar{
-    display:none;
-}
+  .brand-sub{
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
 
-/* LOGO */
+  /* dropdown menu */
+  .menu{ position:relative; }
 
-.logo{
-    color:#90E0EF;
-    font-size:22px;
-    font-weight:bold;
-    letter-spacing:5px;
-    text-transform:uppercase;
-    white-space:nowrap;
-
-    margin-right:18px;
-
-    text-shadow:
-        0 0 10px rgba(76,201,240,.6);
-}
-
-/* BUTTONS */
-
-.sidebar button{
-    background:#111111;
-    color:#90E0EF;
-
-    border:1px solid #4CC9F0;
-
-    padding:10px 14px;
-    border-radius:12px;
-
+  .menu-btn{
+    background: transparent;
+    border: 1px solid var(--blue-dim);
+    color: var(--blue);
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
     cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: background .15s, box-shadow .15s;
+  }
+  .menu-btn:hover{
+    background: rgba(95,199,242,0.08);
+    box-shadow: 0 0 10px -1px var(--glow);
+  }
+  .menu-btn svg{ width:16px; height:16px; }
 
-    transition:.25s;
+  .menu-panel{
+    position:absolute;
+    top: 46px;
+    right: 0;
+    min-width: 180px;
+    background: var(--surface);
+    border: 1px solid var(--blue-dim);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px -6px rgba(0,0,0,0.6), 0 0 16px -4px var(--glow);
+    padding: 6px;
+    display:none;
+    z-index: 20;
+  }
+  .menu-panel.open{ display:block; }
 
-    white-space:nowrap;
-    font-size:14px;
-}
+  .menu-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding: 9px 10px;
+    font-size: 13px;
+    color: var(--text);
+    border-radius: 5px;
+    cursor:pointer;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: .5px;
+  }
+  .menu-item:hover{ background: rgba(95,199,242,0.1); color: var(--blue-bright); }
+  .menu-divider{ height:1px; background:#1a2530; margin:5px 4px; }
+  .menu-item.danger:hover{ background: rgba(242,95,95,0.1); color:#f29696; }
 
-.sidebar button:hover{
-    background:#4CC9F0;
-    color:#000000;
-
-    box-shadow:0 0 15px rgba(76,201,240,.7);
-    transform:translateY(-2px);
-}
-
-/* ===========================
-        MAIN PANEL
-=========================== */
-
-.main-panel{
+  /* ---- CHAT AREA ---- */
+  .chat{
     flex:1;
+    overflow-y:auto;
+    padding: 22px 18px;
     display:flex;
     flex-direction:column;
-    padding:14px;
-}
+    gap: 14px;
+  }
+  .chat::-webkit-scrollbar{ width:6px; }
+  .chat::-webkit-scrollbar-thumb{ background:#16202a; border-radius:3px; }
 
-/* ===========================
-        CHAT BOX
-=========================== */
+  .msg{
+    max-width: 78%;
+    padding: 11px 15px;
+    border-radius: 10px;
+    font-size: 14.5px;
+    line-height:1.45;
+    position:relative;
+    animation: rise .25s ease;
+  }
+  @keyframes rise{ from{ opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 
-.chat-box{
-    flex:1;
+  .msg.bot{
+    align-self:flex-start;
+    background: var(--surface-2);
+    border: 1px solid #1c2933;
+    color: var(--text);
+    border-top-left-radius: 3px;
+  }
 
-    background:#050505;
-    border:1px solid #4CC9F0;
-    border-radius:18px;
+  .msg.user{
+    align-self:flex-end;
+    background: var(--blue);
+    color: #04141c;
+    font-weight:500;
+    border-top-right-radius: 3px;
+    box-shadow: 0 2px 14px -4px var(--glow);
+  }
 
-    padding:18px;
+  .msg-time{
+    display:block;
+    font-family:'Share Tech Mono', monospace;
+    font-size: 10px;
+    margin-top: 5px;
+    opacity:.55;
+    letter-spacing: 1px;
+  }
 
-    overflow-y:auto;
+  .system-line{
+    align-self:center;
+    font-family:'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing:1.5px;
+    color: var(--text-muted);
+    margin: 4px 0;
+  }
 
-    margin-bottom:15px;
-
-    box-shadow:0 0 15px rgba(76,201,240,.15);
-}
-
-/* ===========================
-        INPUT AREA
-=========================== */
-
-.input-area{
+  /* ---- INPUT BAR ---- */
+  .inputbar{
+    flex-shrink:0;
     display:flex;
-    gap:12px;
-}
+    align-items:center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: #070a0d;
+    border-top: 1px solid #121b23;
+  }
 
-/* INPUT */
-
-.input-area input{
+  .input-field{
     flex:1;
-
-    background:#90E0EF;
-    color:#000000;
-
-    border:none;
+    background: var(--surface-2);
+    border: 1px solid var(--blue-dim);
+    color: var(--text);
+    border-radius: 24px;
+    padding: 12px 18px;
+    font-size: 14.5px;
+    font-family: 'Inter', sans-serif;
     outline:none;
+    transition: box-shadow .15s, border-color .15s;
+  }
+  .input-field::placeholder{ color: var(--text-muted); }
+  .input-field:focus{
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(95,199,242,0.12);
+  }
 
-    padding:15px 18px;
-    border-radius:30px;
-
-    font-size:16px;
-
-    box-shadow:0 0 12px rgba(76,201,240,.25);
-
-    transition:.25s;
-}
-
-.input-area input::placeholder{
-    color:#2a2a2a;
-}
-
-.input-area input:focus{
-    box-shadow:0 0 18px rgba(76,201,240,.8);
-}
-
-/* BUTTON */
-
-.input-area button{
-    background:#4CC9F0;
-    color:#000000;
-
+  .send-btn{
+    background: var(--blue);
     border:none;
-
-    padding:15px 22px;
-    border-radius:30px;
-
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     cursor:pointer;
+    transition: transform .12s, box-shadow .15s;
+    box-shadow: 0 2px 14px -3px var(--glow);
+  }
+  .send-btn:hover{ transform: scale(1.06); box-shadow: 0 2px 20px -2px var(--glow); }
+  .send-btn:active{ transform: scale(.95); }
+  .send-btn svg{ width:18px; height:18px; }
+</style>
+</head>
+<body>
 
-    font-weight:bold;
+<div class="app">
 
-    transition:.25s;
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <div>
+        <div class="brand-title">A.R.G.U.S</div>
+      </div>
+    </div>
 
-    box-shadow:0 0 12px rgba(76,201,240,.4);
-}
+    <div class="menu">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+      <div class="menu-panel" id="menuPanel">
+        <div class="menu-item">New session</div>
+        <div class="menu-item">Session log</div>
+        <div class="menu-item">Settings</div>
+        <div class="menu-divider"></div>
+        <div class="menu-item danger">Terminate session</div>
+      </div>
+    </div>
+  </div>
 
-.input-area button:hover{
-    background:#90E0EF;
-    transform:scale(1.05);
-    box-shadow:0 0 20px rgba(76,201,240,.8);
-}
+  <div class="chat" id="chat">
+    <div class="system-line">— SESSION INITIALIZED —</div>
+    <div class="msg bot">
+      A.R.G.U.S online. State your query.
+      <span class="msg-time">09:41</span>
+    </div>
+    <div class="msg user">
+      Status report on sector 7.
+      <span class="msg-time">09:41</span>
+    </div>
+    <div class="msg bot">
+      All clear. No anomalies detected in the last scan cycle.
+      <span class="msg-time">09:42</span>
+    </div>
+  </div>
 
-/* ===========================
-        CHAT COLORS
-=========================== */
+  <div class="inputbar">
+    <input type="text" class="input-field" id="inputField" placeholder="Transmit a message…">
+    <button class="send-btn" id="sendBtn" aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#04141c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="#04141c"/></svg>
+    </button>
+  </div>
 
-.you{
-    color:#4CC9F0;
-    margin-bottom:15px;
-}
-
-.vin{
-    color:#90E0EF;
-    margin-bottom:25px;
-}
-
-.system{
-    color:#FFD166;
-    margin-bottom:15px;
-}
-
-/* ===========================
-        IMAGE OUTPUT
-=========================== */
-
-#image-container img{
-    margin-top:15px;
-    max-width:100%;
-    border-radius:15px;
-    border:1px solid #4CC9F0;
-}
-
-/* ===========================
-        EXTRA
-=========================== */
-
-#voice-container{
-    margin-top:15px;
-}
-
-#emotion-container{
-    margin-top:15px;
-    color:#90E0EF;
-}
-
-/* ===========================
-        CODE BLOCKS
-=========================== */
-
-pre{
-    white-space:pre-wrap;
-    word-wrap:break-word;
-
-    background:#0A0A0A;
-
-    border-left:4px solid #4CC9F0;
-
-    padding:15px;
-    border-radius:12px;
-
-    margin-top:12px;
-}
-
-/* ===========================
-        SCROLLBAR
-=========================== */
-
-::-webkit-scrollbar{
-    width:7px;
-}
-
-::-webkit-scrollbar-track{
-    background:#000000;
-}
-
-::-webkit-scrollbar-thumb{
-    background:#4CC9F0;
-    border-radius:20px;
-}
-
-::-webkit-scrollbar-thumb:hover{
-    background:#90E0EF;
-}
-
-/* ===========================
-        MOBILE
-=========================== */
-
-@media(max-width:768px){
-
-    .main-panel{
-        padding:10px;
-    }
-
-    .chat-box{
-        border-radius:14px;
-        font-size:15px;
-    }
-
-    .input-area{
-        gap:8px;
-    }
-
-    .input-area input{
-        font-size:16px;
-    }
-
-    .input-area button{
-        min-width:70px;
-        font-size:15px;
-    }
-
-    .logo{
-        font-size:18px;
-        letter-spacing:3px;
-    }
-}
+</div>
