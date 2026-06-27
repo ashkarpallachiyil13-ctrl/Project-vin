@@ -1,103 +1,38 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Project Vin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Vin</title>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
 
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #0f0f0f;
-        color: #fff;
-    }
+<body>
 
-    .app-container {
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-    }
+<div class="app-container">
 
-    .main-panel {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-    }
+    <main class="main-panel">
 
-    .chat-box {
-        flex: 1;
-        overflow-y: auto;
-        padding: 12px;
-    }
+        <div class="chat-box" id="chat-box"></div>
 
-    .input-area {
-        display: flex;
-        padding: 10px;
-        border-top: 1px solid #222;
-    }
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Talk to Vin..." autocomplete="off">
+            <button onclick="handleMainAction()">Send</button>
+        </div>
 
-    #user-input {
-        flex: 1;
-        padding: 12px;
-        border-radius: 8px;
-        border: none;
-        outline: none;
-    }
+    </main>
 
-    button {
-        margin-left: 10px;
-        padding: 12px;
-        border: none;
-        border-radius: 8px;
-        background: #1f1f1f;
-        color: white;
-        cursor: pointer;
-    }
+</div>
 
-    .message {
-        margin: 8px 0;
-        padding: 10px;
-        border-radius: 8px;
-        background: #1a1a1a;
-    }
+<!-- MODULES -->
+<script src="{{ url_for('static', filename='modules/memory.js') }}"></script>
+<script src="{{ url_for('static', filename='modules/chatbot.js') }}"></script>
 
-    .you {
-        background: #2a2a2a;
-    }
-
-    .vin {
-        background: #1c1c1c;
-    }
-
-    .system {
-        font-size: 12px;
-        opacity: 0.7;
-        text-align: center;
-    }
-
-    .message img {
-        max-width: 100%;
-        border-radius: 10px;
-        margin-top: 8px;
-    }
-</style>
-
-</head><body><div class="app-container"><main class="main-panel">
-
-    <div class="chat-box" id="chat-box"></div>
-
-    <div class="input-area">
-        <input type="text" id="user-input" placeholder="Talk to Vin...">
-        <button onclick="handleMainAction()">Send</button>
-    </div>
-
-</main>
-
-</div><!-- MODULES --><script src="{{ url_for('static', filename='modules/memory.js') }}"></script><script src="{{ url_for('static', filename='modules/chatbot.js') }}"></script><script>
-
+<script>
 let statusElement = null;
 
+// safer text rendering (no innerHTML injection bugs)
 function addMessage(sender, text) {
 
     const chatBox = document.getElementById("chat-box");
@@ -105,25 +40,26 @@ function addMessage(sender, text) {
     const div = document.createElement("div");
     div.className = "message " + sender;
 
-    const label = sender === "vin" ? "Vin" : sender;
+    const strong = document.createElement("strong");
+    strong.textContent = sender === "vin" ? "Vin: " : "You: ";
 
-    div.innerHTML = `<strong>${label}:</strong> ${text}`;
+    const span = document.createElement("span");
+    span.textContent = text;
+
+    div.appendChild(strong);
+    div.appendChild(span);
 
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// =========================
-// STATUS SYSTEM
-// =========================
-
+// STATUS
 function showStatus(text) {
-
     const chatBox = document.getElementById("chat-box");
 
     statusElement = document.createElement("div");
     statusElement.className = "system";
-    statusElement.innerHTML = `<em>${text}</em>`;
+    statusElement.textContent = text;
 
     chatBox.appendChild(statusElement);
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -136,10 +72,7 @@ function clearStatus() {
     }
 }
 
-// =========================
-// MAIN HANDLER
-// =========================
-
+// MAIN
 async function handleMainAction() {
 
     const input = document.getElementById("user-input");
@@ -154,16 +87,10 @@ async function handleMainAction() {
 
         showStatus("Thinking...");
 
-        // Save user message
         Memory.add("user", text);
 
-        // Send to OpenRouter
-        const response = await chatWithAI(
-            text,
-            Memory.get()
-        );
+        const response = await chatWithAI(text, Memory.get());
 
-        // Save AI reply
         Memory.add("assistant", response);
 
         clearStatus();
@@ -181,13 +108,12 @@ async function handleMainAction() {
     }
 }
 
-
-// ENTER SUPPORT
-
+// ENTER KEY
 document.getElementById("user-input")
 .addEventListener("keypress", function(e) {
     if (e.key === "Enter") handleMainAction();
 });
+</script>
 
-</script></body>
+</body>
 </html>
